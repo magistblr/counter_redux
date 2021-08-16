@@ -1,75 +1,64 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { TitleType } from '../App';
 import { Button } from './Button';
 import s from './Display.module.css';
 import ss from './Button.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppRootStateType } from '../redux/store';
+import { inputValueMaxAC, inputValueStartAC, maxValueAC, messageValueChangedAC, startValueAC } from '../redux/counterReducer';
 
-export type SettingsType = {
-  count: number;
-  descrSet: TitleType;
-  callback: (value: string) => void;
-  titleMax: number;
-  titleStart: number;
-  callbackInputValueStart: (value: number) => void;
-  callbackInputValueMax: (value: number) => void;
-  incorrectClass: boolean;
-  text: string;
-  disable: boolean;
-  setDisable: (value: boolean) => void;
-  setText: (value: string) => void;
-  setCount: (value: number) => void;
-};
 
-export const Settings: React.FC<SettingsType> = ({
-                                                    descrSet,
-                                                    callback,
-                                                    titleStart,
-                                                    titleMax,
-                                                    callbackInputValueStart,
-                                                    callbackInputValueMax,
-                                                    count,
-                                                    incorrectClass,
-                                                    text,
-                                                    disable,
-                                                    setDisable,
-                                                    setCount,
-                                                  }) => {
-  let [valueMax, setValueMax] = useState(0);
-  let [valueStart, setValueStart] = useState(0);
+export const Settings = () => {
 
-  useEffect(() => {
-    let valueStorageMax = localStorage.getItem('maxValue');
-    if (valueStorageMax) {
-      let newValueMax = JSON.parse(valueStorageMax);
-      setValueMax(newValueMax);
-    }
-    let valueStorageStart = localStorage.getItem('startValue');
-    if (valueStorageStart) {
-      let newValueStart = JSON.parse(valueStorageStart);
-      setValueStart(newValueStart);
-    }
-  }, []);
+  // useEffect(() => {
+  //   let valueStorageMax = localStorage.getItem('maxValue');
+  //   if (valueStorageMax) {
+  //     let newValueMax = JSON.parse(valueStorageMax);
+  //     setValueMax(newValueMax);
+  //   }
+  //   let valueStorageStart = localStorage.getItem('startValue');
+  //   if (valueStorageStart) {
+  //     let newValueStart = JSON.parse(valueStorageStart);
+  //     setValueStart(newValueStart);
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    localStorage.setItem('maxValue', JSON.stringify(valueMax));
-    localStorage.setItem('startValue', JSON.stringify(valueStart));
-  }, [valueMax, valueStart]);
+  // useEffect(() => {
+  //   localStorage.setItem('maxValue', JSON.stringify(valueMax));
+  //   localStorage.setItem('startValue', JSON.stringify(valueStart));
+  // }, [valueMax, valueStart]);
 
-  const onChangeMaxHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setValueMax(+e.currentTarget.value);
-    setCount(-1);
-    setDisable(false);
-  };
-  callbackInputValueMax(valueMax);
+  const dispatch = useDispatch()
+  let inputValueMax = useSelector<AppRootStateType, number>( state => state.counter.inputValueMax)
+  let inputValueStart = useSelector<AppRootStateType, number>( state => state.counter.inputValueStart)
+  let disable = useSelector<AppRootStateType, boolean>( state => state.counter.disable)
+  let startValue = useSelector<AppRootStateType, number>( state => state.counter.startValue)
+  let maxValue = useSelector<AppRootStateType, number>( state => state.counter.maxValue)
+  let countValue = useSelector<AppRootStateType, number>( state => state.counter.countValue)
+  let message = useSelector<AppRootStateType, string>( state => state.counter.message)
+
+  let [valueStart, setValueStart] = useState(inputValueStart)
+  let [valueMax, setValueMax] = useState(inputValueMax)
+
+  const inputMessage = valueMax >= 0 || valueMax
 
   const onChangeStartHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setValueStart(+e.currentTarget.value);
-    setCount(-1);
-    setDisable(false);
+    setValueStart(Number(e.currentTarget.value))
+    // dispatch(messageValueChangedAC())
   };
-  callbackInputValueStart(valueStart);
 
-  let inputClass = incorrectClass ? s.input_incorrect : s.input;
+  const onChangeMaxHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    setValueMax(Number(e.currentTarget.value))
+    // dispatch(messageValueChangedAC())
+  };
+
+  const onSetCount = () => {
+    dispatch(startValueAC(startValue = valueStart))
+    dispatch(maxValueAC(maxValue = valueMax))
+    dispatch(inputValueStartAC(inputValueStart = valueStart))
+    dispatch(inputValueMaxAC(inputValueMax = valueMax))
+  }
+
+  // let inputClass = incorrectClass ? s.input_incorrect : s.input;
 
   return (
     <div className={s.wrapper}>
@@ -78,35 +67,26 @@ export const Settings: React.FC<SettingsType> = ({
           <div className={s.wrapper_input}>
             <span className={s.text}>max value</span>
             <input
-              className={inputClass}
+              className={s.input}
               onChange={onChangeMaxHandler}
               type="number"
               step="1"
-              value={titleMax}
+              value={valueMax}
             />
           </div>
           <div className={s.wrapper_input}>
             <span className={s.text}>start value</span>
             <input
-              className={inputClass}
+              className={s.input}
               onChange={onChangeStartHandler}
               type="number"
               step="1"
-              value={titleStart}
+              value={valueStart}
             />
           </div>
         </div>
         <div className={ss.settings_wrapper}>
-          <Button
-            descr={descrSet}
-            callback={callback}
-            count={count}
-            maxValue={titleMax}
-            incorrectClass={incorrectClass}
-            startValue={titleStart}
-            text={text}
-            disableSet={disable}
-          />
+          <Button disable={disable} name={"set"} onclick={onSetCount}/>
         </div>
       </div>
     </div>
