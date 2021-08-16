@@ -1,0 +1,27 @@
+.wrapper {
+  margin-top: 45px;
+}
+
+.number {
+  font-size: 70px;
+  color: aqua;
+}
+
+
+.number_red {
+  font-size: 80px;
+  color: red;
+}
+
+
+.incorrect {
+  font-size: 30px;
+  color: red;
+}
+
+.correct {
+  font-size: 30px;
+  color: aqua;
+}
+
+

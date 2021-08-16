@@ -1,0 +1,57 @@
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.app {
+  display: block;
+  margin-top: 250px;
+  width: 400px;
+  min-height: 250px;
+  border: 3px solid aqua;
+  border-radius: 10px;
+  padding: 20px;
+  margin-right: 50px;
+}
+
+.display {
+  display: block;
+  height: 200px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 70px;
+  border: 3px solid aqua;
+  color: aqua;
+  font-weight: 600;
+}
+
+
+.display_count_red {
+  color: red;
+  font-size: 80px;
+}
+
+
+.wrapper_input {
+  display: flex;
+  justify-content: space-between;
+  font-size: 30px;
+  margin: 40px 10px 40px;
+}
+
+.input {
+  border-radius: 10px;
+  text-align: center;
+  outline: none;
+  border: 1px solid rgb(0, 0, 0);
+}
+
+
+.input_incorrect {
+  border-radius: 10px;
+  text-align: center;
+  background-color: rgb(247, 138, 174);
+  outline: none;
+  border: 2px solid red;
+}
