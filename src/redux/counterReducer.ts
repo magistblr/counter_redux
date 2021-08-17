@@ -27,7 +27,17 @@ export type StartValueInputAT = {
 
 export type MessageAT = {
   type: 'MESSAGE',
-  message: "enter values and press 'set'" | "Incorrect value!"
+  message: MessageType
+}
+
+export type incorrectValueAT = {
+  type: 'INCORRECT-VALUE',
+  value: boolean
+}
+
+export type disabledValueAT = {
+  type: 'DISABLED-VALUE',
+  value: boolean
 }
 
 export type ActionTypes =   ChangeCountAT |
@@ -35,26 +45,32 @@ export type ActionTypes =   ChangeCountAT |
                             StartValueAT |
                             MaxValueInputAT |
                             StartValueInputAT |
-                            MessageAT
+                            MessageAT |
+                            incorrectValueAT |
+                            disabledValueAT
 
 export type AppStateType = {
   countValue: number
   maxValue: number
   startValue: number
-  disable: boolean
   inputValueMax: number
   inputValueStart: number
-  message: "enter values and press 'set'" | "Incorrect value!"
+  message: MessageType
+  incorrectValue: boolean
+  disabled: boolean
 }
+
+export type MessageType = "enter values and press 'set'" | "Incorrect value!" | ""
 
 const initialState: AppStateType = {
   countValue: 0,
   maxValue: 0,
   startValue: 0,
-  disable: false,
   inputValueMax: 0,
   inputValueStart: 0,
-  message: "enter values and press 'set'",
+  disabled: true,
+  message: "",
+  incorrectValue: false,
 }
 
 
@@ -72,6 +88,10 @@ export const counterReducer = (state: AppStateType = initialState, action: Actio
           return {...state, inputValueStart: action.inputValueStart}
       case 'MESSAGE':
           return {...state, message: action.message}
+      case 'INCORRECT-VALUE':
+          return {...state, incorrectValue: action.value}
+      case 'DISABLED-VALUE':
+          return {...state, disabled: action.value}
       default:
           return state
   }
@@ -79,7 +99,7 @@ export const counterReducer = (state: AppStateType = initialState, action: Actio
 
 
 export const countValueAC = (countValue: number): ChangeCountAT => {
-  return { type: 'COUNT-VALUE', countValue}
+  return { type: 'COUNT-VALUE', countValue} as const
 }
 export const maxValueAC = (maxValue: number): MaxValueAT => {
   return { type: 'MAX-VALUE', maxValue}
@@ -93,6 +113,9 @@ export const inputValueMaxAC = (inputValueMax: number): MaxValueInputAT => {
 export const inputValueStartAC = (inputValueStart: number): StartValueInputAT => {
   return { type: 'START-INPUT-VALUE', inputValueStart}
 }
-export const messageValueChangedAC = (message: "enter values and press 'set'" | "Incorrect value!"): MessageAT => {
+export const messageValueChangedAC = (message: MessageType): MessageAT => {
   return { type: 'MESSAGE', message}
+}
+export const disabledValueAC = (value: boolean): disabledValueAT => {
+  return { type: 'DISABLED-VALUE', value}
 }

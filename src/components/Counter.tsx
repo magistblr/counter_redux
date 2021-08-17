@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button } from './Button'
 import s from "./Display.module.css"
 import ss from './Button.module.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppRootStateType } from '../redux/store'
-import { countValueAC } from '../redux/counterReducer'
+import { countValueAC,  MessageType } from '../redux/counterReducer'
 
 
 
@@ -14,25 +14,34 @@ export const Counter = () => {
   const dispatch = useDispatch()
   let startValue = useSelector<AppRootStateType, number>( state => state.counter.startValue)
   let maxValue = useSelector<AppRootStateType, number>( state => state.counter.maxValue)
-  let disable = useSelector<AppRootStateType, boolean>( state => state.counter.disable)
   let countValue = useSelector<AppRootStateType, number>( state => state.counter.countValue)
   let inputValueMax = useSelector<AppRootStateType, number>( state => state.counter.inputValueMax)
   let inputValueStart = useSelector<AppRootStateType, number>( state => state.counter.inputValueStart)
-  let message = useSelector<AppRootStateType, "enter values and press 'set'" | "Incorrect value!">( state => state.counter.message)
+  let message = useSelector<AppRootStateType, MessageType>( state => state.counter.message)
+  let incorrectValue = useSelector<AppRootStateType, boolean>( state => state.counter.incorrectValue)
+  let disabled = useSelector<AppRootStateType, boolean>( state => state.counter.disabled)
 
-  const incorrectMessage = "Incorrect value!"
-  const value = (inputValueMax >= 0) || (inputValueMax > inputValueStart)
+
+  let [disableInc, setDisableInc] = useState<boolean>(disabled)
+  let [disableReset, setDisableReset] = useState<boolean>(disabled)
 
   function addCount(){
+    if(countValue === inputValueMax){
+      setDisableInc(true)
+    }
     if(countValue < maxValue){
       dispatch(countValueAC(countValue + 1))
+      setDisableReset(false)
     }
   }
 
   function resetCount(){
-    dispatch(countValueAC(countValue = startValue))
+    dispatch(countValueAC(startValue))
+    setDisableReset(true)
+    setDisableInc(false)
   }
 
+console.log(disableInc);
 
 
   return (
@@ -40,15 +49,15 @@ export const Counter = () => {
       <div className={s.app}>
         <div className={s.display}>
           <div className={s.wrapper_display}>
-               { value
+               { message === ""
                       ? <span className={s.number}>{countValue}</span>
-                      : <span className={s.incorrect}>{incorrectMessage}</span>
+                      : <span className={s.incorrect}>{message}</span>
                }
           </div>
         </div>
         <div className={ss.counter_wrapper}>
-          <Button disable={disable} name={"inc"} onclick={addCount}/>
-          <Button disable={disable} name={"reset"} onclick={resetCount}/>
+          <Button disable={disableInc} name={"inc"} onclick={addCount}/>
+          <Button disable={disableReset} name={"reset"} onclick={resetCount}/>
         </div>
       </div>
     </div>

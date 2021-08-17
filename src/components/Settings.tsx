@@ -4,7 +4,8 @@ import s from './Display.module.css';
 import ss from './Button.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppRootStateType } from '../redux/store';
-import { inputValueMaxAC, inputValueStartAC, maxValueAC, messageValueChangedAC, startValueAC } from '../redux/counterReducer';
+import { countValueAC, disabledValueAC, inputValueMaxAC, inputValueStartAC, maxValueAC, messageValueChangedAC, startValueAC } from '../redux/counterReducer';
+
 
 
 export const Settings = () => {
@@ -30,35 +31,62 @@ export const Settings = () => {
   const dispatch = useDispatch()
   let inputValueMax = useSelector<AppRootStateType, number>( state => state.counter.inputValueMax)
   let inputValueStart = useSelector<AppRootStateType, number>( state => state.counter.inputValueStart)
-  let disable = useSelector<AppRootStateType, boolean>( state => state.counter.disable)
   let startValue = useSelector<AppRootStateType, number>( state => state.counter.startValue)
   let maxValue = useSelector<AppRootStateType, number>( state => state.counter.maxValue)
   let countValue = useSelector<AppRootStateType, number>( state => state.counter.countValue)
   let message = useSelector<AppRootStateType, string>( state => state.counter.message)
+  let incorrectValue = useSelector<AppRootStateType, boolean>( state => state.counter.incorrectValue)
+  let disabled = useSelector<AppRootStateType, boolean>( state => state.counter.disabled)
 
   let [valueStart, setValueStart] = useState(inputValueStart)
   let [valueMax, setValueMax] = useState(inputValueMax)
+  let [disableSet, setDisableSet] = useState(false)
 
-  const inputMessage = valueMax >= 0 || valueMax
+
+  function value() {
+    if((valueMax < 0) || (valueStart < 0) || (valueMax <= valueStart)){
+      dispatch(messageValueChangedAC("Incorrect value!"))
+      dispatch(disabledValueAC(true))
+    }
+    if(((valueMax > 0) && (valueStart > 0)) || (valueMax > valueStart)){
+      dispatch(messageValueChangedAC(""))
+      dispatch(disabledValueAC(false))
+    }
+
+  }
 
   const onChangeStartHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    value()
     setValueStart(Number(e.currentTarget.value))
-    // dispatch(messageValueChangedAC())
+    setDisableSet(false)
   };
 
   const onChangeMaxHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    value()
     setValueMax(Number(e.currentTarget.value))
-    // dispatch(messageValueChangedAC())
+    setDisableSet(false)
   };
 
+
+  // useEffect(() => {
+  //   if((valueMax < 0) || (valueStart < 0) || (valueMax <= valueStart)){
+  //     dispatch(messageValueChangedAC(message = "Incorrect value!"))
+  //   }
+  // }, [setValueStart, setValueMax])
+console.log(valueStart);
+
+
+
   const onSetCount = () => {
-    dispatch(startValueAC(startValue = valueStart))
-    dispatch(maxValueAC(maxValue = valueMax))
-    dispatch(inputValueStartAC(inputValueStart = valueStart))
-    dispatch(inputValueMaxAC(inputValueMax = valueMax))
+    dispatch(startValueAC(valueStart))
+    dispatch(maxValueAC(valueMax))
+    dispatch(countValueAC(startValue))
+    dispatch(inputValueStartAC(valueStart))
+    dispatch(inputValueMaxAC(valueMax))
+    setDisableSet(true)
   }
 
-  // let inputClass = incorrectClass ? s.input_incorrect : s.input;
+  const inputClass = message === "Incorrect value!" ? s.input_incorrect : s.input;
 
   return (
     <div className={s.wrapper}>
@@ -67,7 +95,7 @@ export const Settings = () => {
           <div className={s.wrapper_input}>
             <span className={s.text}>max value</span>
             <input
-              className={s.input}
+              className={inputClass}
               onChange={onChangeMaxHandler}
               type="number"
               step="1"
@@ -77,7 +105,7 @@ export const Settings = () => {
           <div className={s.wrapper_input}>
             <span className={s.text}>start value</span>
             <input
-              className={s.input}
+              className={inputClass}
               onChange={onChangeStartHandler}
               type="number"
               step="1"
@@ -86,7 +114,7 @@ export const Settings = () => {
           </div>
         </div>
         <div className={ss.settings_wrapper}>
-          <Button disable={disable} name={"set"} onclick={onSetCount}/>
+          <Button disable={disableSet} name={"set"} onclick={onSetCount}/>
         </div>
       </div>
     </div>
