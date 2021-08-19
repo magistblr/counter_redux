@@ -66,21 +66,12 @@
   color: aqua;
 }
 
-
-.number_red {
-  font-size: 80px;
-  color: red;
-}
-
-
-.incorrect {
-  font-size: 30px;
-  color: red;
-}
-
-.correct {
+.correct_message {
   font-size: 30px;
   color: aqua;
 }
 
+.incorrect {
+  color: red;
+}
 

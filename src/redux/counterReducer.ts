@@ -39,6 +39,18 @@ export type disabledValueAT = {
   type: 'DISABLED-VALUE',
   value: boolean
 }
+export type disabledIncAT = {
+  type: 'DISABLED-INC',
+  value: boolean
+}
+export type disabledResetAT = {
+  type: 'DISABLED-RESET',
+  value: boolean
+}
+export type disabledSetAT = {
+  type: 'DISABLED-SET',
+  value: boolean
+}
 
 export type ActionTypes =   ChangeCountAT |
                             MaxValueAT |
@@ -47,7 +59,10 @@ export type ActionTypes =   ChangeCountAT |
                             StartValueInputAT |
                             MessageAT |
                             incorrectValueAT |
-                            disabledValueAT
+                            disabledValueAT |
+                            disabledIncAT |
+                            disabledResetAT |
+                            disabledSetAT
 
 export type AppStateType = {
   countValue: number
@@ -56,8 +71,9 @@ export type AppStateType = {
   inputValueMax: number
   inputValueStart: number
   message: MessageType
-  incorrectValue: boolean
-  disabled: boolean
+  disabledInc: boolean
+  disabledReset: boolean
+  disabledSet: boolean
 }
 
 export type MessageType = "enter values and press 'set'" | "Incorrect value!" | ""
@@ -68,9 +84,10 @@ const initialState: AppStateType = {
   startValue: 0,
   inputValueMax: 0,
   inputValueStart: 0,
-  disabled: true,
+  disabledInc: true,
+  disabledReset: true,
+  disabledSet: false,
   message: "",
-  incorrectValue: false,
 }
 
 
@@ -88,10 +105,12 @@ export const counterReducer = (state: AppStateType = initialState, action: Actio
           return {...state, inputValueStart: action.inputValueStart}
       case 'MESSAGE':
           return {...state, message: action.message}
-      case 'INCORRECT-VALUE':
-          return {...state, incorrectValue: action.value}
-      case 'DISABLED-VALUE':
-          return {...state, disabled: action.value}
+      case 'DISABLED-INC':
+          return {...state, disabledInc: action.value}
+      case 'DISABLED-RESET':
+          return {...state, disabledReset: action.value}
+      case 'DISABLED-SET':
+          return {...state, disabledSet: action.value}
       default:
           return state
   }
@@ -116,6 +135,12 @@ export const inputValueStartAC = (inputValueStart: number): StartValueInputAT =>
 export const messageValueChangedAC = (message: MessageType): MessageAT => {
   return { type: 'MESSAGE', message}
 }
-export const disabledValueAC = (value: boolean): disabledValueAT => {
-  return { type: 'DISABLED-VALUE', value}
+export const disabledIncAC = (value: boolean): disabledIncAT => {
+  return { type: 'DISABLED-INC', value}
+}
+export const disabledResetAC = (value: boolean): disabledResetAT => {
+  return { type: 'DISABLED-RESET', value}
+}
+export const disabledSetAC = (value: boolean): disabledSetAT => {
+  return { type: 'DISABLED-SET', value}
 }
